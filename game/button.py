@@ -4,11 +4,11 @@ class Button:
     def __init__(self, x, y, width, height, text, action):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font('./font/Technology.ttf', 36)
         self.action = action
 
     def draw(self, window):
-        pygame.draw.rect(window, (0, 255, 0), self.rect)
+        pygame.draw.rect(window, (29, 231, 255), self.rect)
         text_surface = self.font.render(self.text, True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=self.rect.center)
         window.blit(text_surface, text_rect)

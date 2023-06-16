@@ -1,6 +1,9 @@
 import pygame
+import sys
 from utils import constants
 from game.button import Button
+from game.image import Images
+from game.game_logic import GameLogic
 
 class Game:
     def __init__(self):
@@ -9,7 +12,7 @@ class Game:
         # estado inicial del juego sera la pantalla de inicio
         self.current_scene='inicio'
         #Definimos las fuentes
-        self.font = pygame.font.Font(None, 24)
+        self.font = pygame.font.Font('./font/FUTURISM.TTF', 50)
         #Definimos el tamaño de la pantalla
         self.window = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         #Definimos el titulo
@@ -19,6 +22,11 @@ class Game:
         self.button_exit = Button(300, 400, 200, 50, "Salir", self.exit)
         #Verificamos que al iniciar a un no hemos ingresado a la escena del juego
         self.is_scene_entered = False
+        # Instanciamos la lógica del juego
+        self.game_logic = GameLogic()
+        #instaciamos las imagenes
+        self.image_manager = Images()
+
 
     def run(self):
         # Bucle principal del juego
@@ -39,21 +47,17 @@ class Game:
             self.window.fill((0, 0, 0))
 
             if self.current_scene == "inicio":
-                self.button_start.draw(self.window)
-                self.button_exit.draw(self.window)
+                self.game_logic.draw_inicio(self.window, self.button_start, self.button_exit)
             elif self.current_scene == "juego":
                 # Mostrar contenido específico de la escena "juego"
-                text_surface = self.font.render("¡Estás en la escena 'juego'!", True, (255, 255, 255))
-                text_rect = text_surface.get_rect(center=(constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT / 2))
-                self.window.blit(text_surface, text_rect)
-                self.button_exit.draw(self.window)
+                self.game_logic.draw_juego(self.window, self.button_exit, self.image_manager)
             # Actualizar la ventana
             pygame.display.flip()
 
         pygame.quit()
         
     def exit(self):
-        pygame.quit()
+        sys.exit()
     
     def iniciar(self):
         self.current_scene = "juego"
