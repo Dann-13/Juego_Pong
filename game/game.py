@@ -50,7 +50,7 @@ class Game:
                 self.game_logic.draw_inicio(self.window, self.button_start, self.button_exit)
             elif self.current_scene == "juego":
                 # Mostrar contenido específico de la escena "juego"
-                self.game_logic.draw_juego(self.window, self.button_exit, self.image_manager)
+                self.game_logic.draw_juego(self.window, self.image_manager)
             # Actualizar la ventana
             pygame.display.flip()
 
