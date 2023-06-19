@@ -49,8 +49,13 @@ class Game:
             if self.current_scene == "inicio":
                 self.game_logic.draw_inicio(self.window, self.button_start, self.button_exit)
             elif self.current_scene == "juego":
+                pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+                pygame.event.set_blocked(pygame.MOUSEBUTTONUP)
                 # Mostrar contenido específico de la escena "juego"
                 self.game_logic.draw_juego(self.window, self.image_manager)
+            # Restaurar detección de eventos del mouse en la siguiente iteración del bucle
+            pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
+            pygame.event.set_allowed(pygame.MOUSEBUTTONUP)
             # Actualizar la ventana
             pygame.display.flip()
 

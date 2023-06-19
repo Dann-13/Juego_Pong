@@ -9,6 +9,10 @@ class GameLogic:
         self.is_scene_entered = False
         self.y_paleta1 = 100
         self.y_paleta2 = 100
+        self.bola_pos = (constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2)
+        
+        self.ball_velocity_x = 1
+        self.ball_velocity_y = 1
         
     def draw_inicio(self, window, button_start, button_exit):
         text_surface = self.font.render("PONG WARS", True, (255, 255, 255))
@@ -21,7 +25,8 @@ class GameLogic:
         #cargar las imagenes
         image1 = images.load_image("./assets/Paleta1.png",50,220)
         image2 = images.load_image("./assets/Paleta2.png",50,220)
-            # Posición inicial de la paleta 2 (en el borde derecho de la ventana)
+        imageBall = images.load_image("./assets/Bola.png", 40,40)
+        # Posición inicial de la paleta 2 (en el borde derecho de la ventana)
         x2 = constants.SCREEN_WIDTH - image2.get_width()
         
         #Manejando movimiento de las imagenes paleta 1
@@ -31,7 +36,17 @@ class GameLogic:
         #Paleta 2
         self.y_paleta2 = self.moverPaletas(pygame.K_UP, pygame.K_DOWN, self.y_paleta2)
         images.draw_image(window, image2, x2, self.y_paleta2)
-    
+        
+        #Bola
+        self.bola_pos = (self.bola_pos[0] + self.ball_velocity_x, self.bola_pos[1] + self.ball_velocity_y)
+        # Comprueba si la pelota ha alcanzado los límites de la ventana y cambia la dirección si es necesario
+        if self.bola_pos[0] <= 0 or self.bola_pos[0] >= constants.SCREEN_WIDTH - 40:
+            self.ball_velocity_x *= -1
+        if self.bola_pos[1] <= 0 or self.bola_pos[1] >= constants.SCREEN_HEIGHT - 40:
+            self.ball_velocity_y *= -1
+        images.draw_image(window, imageBall, self.bola_pos[0], self.bola_pos[1])
+
+
     def moverPaletas(self, key_up, key_down, position_y):
         if pygame.key.get_pressed()[key_up]:
             position_y -= 1
