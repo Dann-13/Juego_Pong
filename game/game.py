@@ -5,14 +5,13 @@ from game.button import Button
 from game.image import Images
 from game.game_logic import GameLogic
 
+
 class Game:
     def __init__(self):
         # Inicializar Pygame
         pygame.init()
         # estado inicial del juego sera la pantalla de inicio
         self.current_scene='inicio'
-        #Definimos las fuentes
-        self.font = pygame.font.Font('./font/FUTURISM.TTF', 50)
         #Definimos el tamaño de la pantalla
         self.window = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         #Definimos el titulo

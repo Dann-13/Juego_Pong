@@ -1,11 +1,12 @@
 import pygame
 import pygame.image
+from game.score import Score
 from utils import constants
-
+from font.font import Font
 class GameLogic:
     def __init__(self):
          # Inicializar la lógica del juego
-        self.font = pygame.font.Font('./font/FUTURISM.TTF', 50)
+        self.font = Font('./font/FUTURISM.TTF', 32)
         self.is_scene_entered = False
         self.y_paleta1 = 100
         self.y_paleta2 = 100
@@ -15,8 +16,10 @@ class GameLogic:
         self.ball_velocity_x = 1
         self.ball_velocity_y = 1
         
+        self.score = Score()
+        
     def draw_inicio(self, window, button_start, button_exit):
-        text_surface = self.font.render("PONG WARS", True, (255, 255, 255))
+        text_surface = self.font.render_text("Pong Wars", (255, 255, 255), 50)
         text_rect = text_surface.get_rect(center=(constants.SCREEN_WIDTH / 2, 200))
         window.blit(text_surface, text_rect)
         button_start.draw(window)
@@ -39,11 +42,43 @@ class GameLogic:
         images.draw_image(window, paleta2, x2, self.y_paleta2)
         
         #Bola
-        self.moverPelota(50,220)
+        self.moverPelota()
+        self.colisionPaletas(50,220)
         images.draw_image(window, imageBall, self.bola_pos[0], self.bola_pos[1])
 
-
+        #score
+        score_text = f"Jugador 1: {self.score.get_score1()}   Jugador 2: {self.score.get_score2()}"
+        text_surface = self.font.render_text(score_text, (255, 255, 255), 20)
+        text_rect = text_surface.get_rect(center=(constants.SCREEN_WIDTH / 2, 50))
+        window.blit(text_surface, text_rect)
+        
     def moverPaletas(self, key_up, key_down, position_y):
+        """
+        Mueve la posición vertical de las paletas del juego según las teclas presionadas.
+
+        Parámetros:
+        key_up (int): Código de tecla que representa la tecla de movimiento hacia arriba.
+        key_down (int): Código de tecla que representa la tecla de movimiento hacia abajo.
+        position_y (int): La posición actual de la paleta en el eje Y.
+
+        Retorna:
+        int: La nueva posición vertical de la paleta después de aplicar el movimiento.
+
+        Comportamiento:
+        - Si la tecla key_up está presionada, la posición_y se decrementa en 1 unidad.
+        - Si la tecla key_down está presionada, la posición_y se incrementa en 1 unidad.
+        - Si la posición_y es menor que 0, se ajusta a 0 para evitar que la paleta se salga de la pantalla.
+        - Si la posición_y es mayor que constants.SCREEN_HEIGHT - 220, se ajusta a constants.SCREEN_HEIGHT - 220
+        para evitar que la paleta se salga de la pantalla en la parte inferior.
+
+        Ejemplo de uso:
+        position_y = moverPaletas(pygame.K_UP, pygame.K_DOWN, position_y)
+
+        Notas:
+        - Esta función asume que se está utilizando la biblioteca pygame para manejar la entrada de teclado.
+        - La función debe ser llamada dentro del bucle principal del juego para actualizar continuamente la posición de la paleta.
+
+        """
         if pygame.key.get_pressed()[key_up]:
             position_y -= 1
         elif pygame.key.get_pressed()[key_down]:
@@ -56,13 +91,9 @@ class GameLogic:
         
         return position_y
     
-    def moverPelota(self, paleta_width, paleta_height):
+    def moverPelota(self):
         """
-        Esta funcion se encarga de mover la pelota, verificar su colision en pantalla y
-        y a su ver verificar la colision con las paletas
-        Parámetros:
-        paleta_width (int): Ancho de la paleta.
-        paleta_height (int): Alto de la Paleta
+            Actualiza la posición de la pelota según la velocidad y comprueba si ha alcanzado los límites de la ventana para cambiar su dirección si es necesario.
         """
         # Actualizar la posición de la pelota según la velocidad
         self.bola_pos = (self.bola_pos[0] + self.ball_velocity_x, self.bola_pos[1] + self.ball_velocity_y)
@@ -73,7 +104,14 @@ class GameLogic:
         if self.bola_pos[1] <= 0 or self.bola_pos[1] >= constants.SCREEN_HEIGHT - 50:
             self.ball_velocity_y *= -1
             
-        #Verificar colisión con la paleta 1
+    def colisionPaletas(self, paleta_width, paleta_height):
+        """
+            Verifica la colisión de la pelota con las paletas y cambia la dirección de la pelota si hay colisión.
+
+            Parámetros:
+            paleta_width (int): Ancho de la paleta.
+            paleta_height (int): Alto de la paleta.
+        """
         # Verificar colisión con la paleta 1
         paleta1_rect = pygame.Rect(0, self.y_paleta1, paleta_width, paleta_height)
         bola_rect = pygame.Rect(self.bola_pos[0], self.bola_pos[1], 40, 40)
