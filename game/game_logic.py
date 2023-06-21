@@ -7,6 +7,7 @@ class GameLogic:
     def __init__(self):
          # Inicializar la lógica del juego
         self.font = Font('./font/FUTURISM.TTF', 32)
+        self.fontContenido = Font('./font/Technology.ttf', 25)
         self.is_scene_entered = False
         self.y_paleta1 = 100
         self.y_paleta2 = 100
@@ -43,12 +44,12 @@ class GameLogic:
         
         #Bola
         self.moverPelota()
-        self.colisionPaletas(50,220)
+        score = self.update_score(50,220)
         images.draw_image(window, imageBall, self.bola_pos[0], self.bola_pos[1])
 
-        #score
-        score_text = f"Jugador 1: {self.score.get_score1()}   Jugador 2: {self.score.get_score2()}"
-        text_surface = self.font.render_text(score_text, (255, 255, 255), 20)
+        # Mostrar el puntaje en la ventana de juego
+        score_text = f"Jugador 1: {score.get_score1()}   Jugador 2: {score.get_score2()}"
+        text_surface = self.fontContenido.render_text(score_text, (255, 255, 255),15)
         text_rect = text_surface.get_rect(center=(constants.SCREEN_WIDTH / 2, 50))
         window.blit(text_surface, text_rect)
         
@@ -93,32 +94,35 @@ class GameLogic:
     
     def moverPelota(self):
         """
-            Actualiza la posición de la pelota según la velocidad y comprueba si ha alcanzado los límites de la ventana para cambiar su dirección si es necesario.
+        Actualiza la posición de la pelota según la velocidad y comprueba si ha alcanzado los límites de la ventana para cambiar su dirección si es necesario.
         """
         # Actualizar la posición de la pelota según la velocidad
         self.bola_pos = (self.bola_pos[0] + self.ball_velocity_x, self.bola_pos[1] + self.ball_velocity_y)
 
         # Comprobar si la pelota ha alcanzado los límites de la ventana y cambiar la dirección si es necesario
-        if self.bola_pos[0] <= 0 or self.bola_pos[0] >= constants.SCREEN_WIDTH - 50:
+        if self.bola_pos[0] <= 0 or self.bola_pos[0] >= constants.SCREEN_WIDTH - 40:
             self.ball_velocity_x *= -1
-        if self.bola_pos[1] <= 0 or self.bola_pos[1] >= constants.SCREEN_HEIGHT - 50:
+        if self.bola_pos[1] <= 0 or self.bola_pos[1] >= constants.SCREEN_HEIGHT - 40:
             self.ball_velocity_y *= -1
-            
-    def colisionPaletas(self, paleta_width, paleta_height):
-        """
-            Verifica la colisión de la pelota con las paletas y cambia la dirección de la pelota si hay colisión.
 
-            Parámetros:
-            paleta_width (int): Ancho de la paleta.
-            paleta_height (int): Alto de la paleta.
-        """
+
+
+            
+    def update_score(self, paleta_width, paleta_height):
         # Verificar colisión con la paleta 1
         paleta1_rect = pygame.Rect(0, self.y_paleta1, paleta_width, paleta_height)
+        paleta2_rect = pygame.Rect(constants.SCREEN_WIDTH - paleta_width, self.y_paleta2, paleta_width, paleta_height)
         bola_rect = pygame.Rect(self.bola_pos[0], self.bola_pos[1], 40, 40)
+    
         if bola_rect.colliderect(paleta1_rect):
             self.ball_velocity_x *= -1  # Cambiar dirección horizontal de la pelota
-
-        # Verificar colisión con la paleta 2
-        paleta2_rect = pygame.Rect(constants.SCREEN_WIDTH - paleta_width, self.y_paleta2, paleta_width, paleta_height)
-        if bola_rect.colliderect(paleta2_rect):
-            self.ball_velocity_x *= -1  # Cambiar dirección horizontal de la pelota
+        elif bola_rect.colliderect(paleta2_rect):
+            self.ball_velocity_x *= -1  # Cambiar dirección horizontal de la pelota 
+    
+        # Verificar si la pelota ha alcanzado los límites de la ventana y actualizar el puntaje correspondiente
+        if self.bola_pos[0] <= 0:
+            self.score.increaseScore2()
+        elif self.bola_pos[0] >= constants.SCREEN_WIDTH - 40:
+            self.score.increaseScore1()
+    
+        return self.score
