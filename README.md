@@ -8,6 +8,9 @@ El objetivo principal es evitar que la pelota pase por la paleta propia y hacer 
 
 ![Inicio](https://github.com/Dann-13/Juego_Pong/assets/112647085/248a439b-4501-46a0-9c7a-69da62a38f5f)
 
+![Juego](https://github.com/Dann-13/Juego_Pong/assets/112647085/7adff7fa-1c5b-4f5a-9cff-024f022ab05b)
+
+
 
 ## Descripción Proyecto
 Como un fan de los videojuegos y un entusiasta por la programación, me propuse el reto de crear un videojuego desde cero con el objetivo de aplicar mis conocimientos e ir aprendiendo poco a poco en el desarrollo de este proyecto
