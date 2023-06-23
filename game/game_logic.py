@@ -44,17 +44,25 @@ class GameLogic:
         # Posición inicial de la paleta 2 (en el borde derecho de la ventana)
         x2 = constants.SCREEN_WIDTH - self.paleta2.get_width()
         
-        #Manejando movimiento de las imagenes paleta 1
+        #Manejando movimiento de las paletas
         self.y_paleta1 = self.moverPaletas(pygame.K_w, pygame.K_s, self.y_paleta1)
-        self.image_manager.draw_image(window, self.paleta1, 0, self.y_paleta1)
-        
-        #Paleta 2
         self.y_paleta2 = self.moverPaletas(pygame.K_UP, pygame.K_DOWN, self.y_paleta2)
+
+        #Actualizar las pocisiones de los rectangulos de colision de las paletas
+        self.paleta1_rect.y = self.y_paleta1
+        self.paleta2_rect.y = self.y_paleta2
+        
+        #Dibujando las pelotas
+        self.image_manager.draw_image(window, self.paleta1, 0, self.y_paleta1)
         self.image_manager.draw_image(window, self.paleta2, x2, self.y_paleta2)
         
         #Bola
         self.moverPelota()
+        
+        # Comprobar colisiones y actualizar puntaje
         score = self.update_score()
+        
+        #Dibujando la pelota
         self.image_manager.draw_image(window, self.imageBall, self.bola_pos[0], self.bola_pos[1])
 
         # Mostrar el puntaje en la ventana de juego
