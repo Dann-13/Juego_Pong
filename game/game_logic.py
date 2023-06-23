@@ -3,21 +3,34 @@ import pygame.image
 from game.score import Score
 from utils import constants
 from font.font import Font
+from game.image import Images
 class GameLogic:
     def __init__(self):
          # Inicializar la lógica del juego
         self.font = Font('./font/FUTURISM.TTF', 32)
         self.fontContenido = Font('./font/Technology.ttf', 25)
+        #instaciamos las imagenes
+        self.image_manager = Images()
+        #cargar las imagenes
+        self.paleta1 =self.image_manager.load_image("./assets/Paleta1.png",50,220)
+        self.paleta2= self.image_manager.load_image("./assets/Paleta2.png",50,220)
+        self.imageBall = self.image_manager.load_image("./assets/Bola.png", 40,40)
+        #escena de para controlar si entro o no
         self.is_scene_entered = False
+        #Poscision de las paletas en y
         self.y_paleta1 = 100
         self.y_paleta2 = 100
-        
+        #Posicion de la bola al centro de la pantalla
         self.bola_pos = (constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2)
-        
+        #Velocidad de la pelota en x, y
         self.ball_velocity_x = 1
         self.ball_velocity_y = 1
-        
+        #inicializamos la clase score
         self.score = Score()
+        #Creacion de los rectangulos de colicion
+        self.paleta1_rect = pygame.Rect(0, self.y_paleta1, 50, 220)
+        self.paleta2_rect = pygame.Rect(constants.SCREEN_WIDTH - 50, self.y_paleta2, 50, 220)
+        self.bola_rect = pygame.Rect(self.bola_pos[0], self.bola_pos[1], 40, 40)
         
     def draw_inicio(self, window, button_start, button_exit):
         text_surface = self.font.render_text("Pong Wars", (255, 255, 255), 50)
@@ -26,30 +39,27 @@ class GameLogic:
         button_start.draw(window)
         button_exit.draw(window)
         
-    def draw_juego(self, window, images):
-        #cargar las imagenes
-        paleta1 = images.load_image("./assets/Paleta1.png",50,220)
-        paleta2= images.load_image("./assets/Paleta2.png",50,220)
-        imageBall = images.load_image("./assets/Bola.png", 40,40)
+    def draw_juego(self, window):
+        
         # Posición inicial de la paleta 2 (en el borde derecho de la ventana)
-        x2 = constants.SCREEN_WIDTH - paleta2.get_width()
+        x2 = constants.SCREEN_WIDTH - self.paleta2.get_width()
         
         #Manejando movimiento de las imagenes paleta 1
         self.y_paleta1 = self.moverPaletas(pygame.K_w, pygame.K_s, self.y_paleta1)
-        images.draw_image(window, paleta1, 0, self.y_paleta1)
+        self.image_manager.draw_image(window, self.paleta1, 0, self.y_paleta1)
         
         #Paleta 2
         self.y_paleta2 = self.moverPaletas(pygame.K_UP, pygame.K_DOWN, self.y_paleta2)
-        images.draw_image(window, paleta2, x2, self.y_paleta2)
+        self.image_manager.draw_image(window, self.paleta2, x2, self.y_paleta2)
         
         #Bola
         self.moverPelota()
-        score = self.update_score(50,220)
-        images.draw_image(window, imageBall, self.bola_pos[0], self.bola_pos[1])
+        score = self.update_score()
+        self.image_manager.draw_image(window, self.imageBall, self.bola_pos[0], self.bola_pos[1])
 
         # Mostrar el puntaje en la ventana de juego
         score_text = f"Jugador 1: {score.get_score1()}   Jugador 2: {score.get_score2()}"
-        text_surface = self.fontContenido.render_text(score_text, (255, 255, 255),15)
+        text_surface = self.fontContenido.render_text(score_text, (255, 255, 255),25)
         text_rect = text_surface.get_rect(center=(constants.SCREEN_WIDTH / 2, 50))
         window.blit(text_surface, text_rect)
         
@@ -90,6 +100,10 @@ class GameLogic:
         elif position_y > constants.SCREEN_HEIGHT - 220:
             position_y = constants.SCREEN_HEIGHT - 220
         
+         # Actualizar la posición del rectángulo de colisión de la paleta
+        self.paleta1_rect.y = position_y
+        self.paleta2_rect.y = position_y
+        
         return position_y
     
     def moverPelota(self):
@@ -98,25 +112,22 @@ class GameLogic:
         """
         # Actualizar la posición de la pelota según la velocidad
         self.bola_pos = (self.bola_pos[0] + self.ball_velocity_x, self.bola_pos[1] + self.ball_velocity_y)
-
+        
         # Comprobar si la pelota ha alcanzado los límites de la ventana y cambiar la dirección si es necesario
         if self.bola_pos[0] <= 0 or self.bola_pos[0] >= constants.SCREEN_WIDTH - 40:
             self.ball_velocity_x *= -1
         if self.bola_pos[1] <= 0 or self.bola_pos[1] >= constants.SCREEN_HEIGHT - 40:
             self.ball_velocity_y *= -1
-
-
-
-            
-    def update_score(self, paleta_width, paleta_height):
-        # Verificar colisión con la paleta 1
-        paleta1_rect = pygame.Rect(0, self.y_paleta1, paleta_width, paleta_height)
-        paleta2_rect = pygame.Rect(constants.SCREEN_WIDTH - paleta_width, self.y_paleta2, paleta_width, paleta_height)
-        bola_rect = pygame.Rect(self.bola_pos[0], self.bola_pos[1], 40, 40)
+        
+        # Actualizar la posición del rectángulo de colisión de la bola
+        self.bola_rect.x = self.bola_pos[0]
+        self.bola_rect.y = self.bola_pos[1]
+         
+    def update_score(self):
     
-        if bola_rect.colliderect(paleta1_rect):
+        if self.bola_rect.colliderect(self.paleta1_rect):
             self.ball_velocity_x *= -1  # Cambiar dirección horizontal de la pelota
-        elif bola_rect.colliderect(paleta2_rect):
+        elif self.bola_rect.colliderect(self.paleta2_rect):
             self.ball_velocity_x *= -1  # Cambiar dirección horizontal de la pelota 
     
         # Verificar si la pelota ha alcanzado los límites de la ventana y actualizar el puntaje correspondiente

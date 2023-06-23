@@ -2,7 +2,6 @@ import pygame
 import sys
 from utils import constants
 from game.button import Button
-from game.image import Images
 from game.game_logic import GameLogic
 
 
@@ -23,8 +22,7 @@ class Game:
         self.is_scene_entered = False
         # Instanciamos la lógica del juego
         self.game_logic = GameLogic()
-        #instaciamos las imagenes
-        self.image_manager = Images()
+        
 
 
     def run(self):
@@ -51,7 +49,7 @@ class Game:
                 pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
                 pygame.event.set_blocked(pygame.MOUSEBUTTONUP)
                 # Mostrar contenido específico de la escena "juego"
-                self.game_logic.draw_juego(self.window, self.image_manager)
+                self.game_logic.draw_juego(self.window)
             # Restaurar detección de eventos del mouse en la siguiente iteración del bucle
             pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
             pygame.event.set_allowed(pygame.MOUSEBUTTONUP)
