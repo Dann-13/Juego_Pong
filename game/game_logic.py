@@ -1,4 +1,5 @@
 import pygame
+import os
 import pygame.image
 from game.score import Score
 from utils import constants
@@ -12,9 +13,12 @@ class GameLogic:
         #instaciamos las imagenes
         self.image_manager = Images()
         #cargar las imagenes
-        self.paleta1 =self.image_manager.load_image("./assets/Paleta1.png",50,220)
-        self.paleta2= self.image_manager.load_image("./assets/Paleta2.png",50,220)
-        self.imageBall = self.image_manager.load_image("./assets/Bola.png", 40,40)
+        #obtengo la ruta base del directorio actual
+        # Obtener la ruta base del directorio actual
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.paleta1 =self.image_manager.load_image(os.path.join(base_path,"assets/Paleta1.png"),50,220)
+        self.paleta2= self.image_manager.load_image(os.path.join(base_path,"assets/Paleta2.png"),50,220)
+        self.imageBall = self.image_manager.load_image(os.path.join(base_path,"assets/Bola.png"), 40,40)
         #escena de para controlar si entro o no
         self.is_scene_entered = False
         #Poscision de las paletas en y
