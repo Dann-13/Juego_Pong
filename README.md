@@ -33,18 +33,18 @@ Enumera las principales características y funcionalidades del juego.
 
 ## Requisitos
 
-Enumera los requisitos necesarios para ejecutar el juego.
+los siguientes requisitos son necesarios para que el juego funcione
 
 - Python 3.x
+- Vs Code o algun editor que soporte python
 - Pygame
 
 ## Instalación
 
-Explica los pasos necesarios para instalar y configurar el juego localmente. Esto puede incluir:
+Para que el juego funcione sigue los siguientes pasos:
 
 1. Clonar el repositorio: `git clone https://github.com/tu-usuario/tu-repositorio.git`
 2. Instalar las dependencias: `pip install -r requirements.txt`
-3. 
 ## Uso
 
 El archivo que tiene que ejecutar para que se inicialice el juego es el main.py de la raiz del proyecto
